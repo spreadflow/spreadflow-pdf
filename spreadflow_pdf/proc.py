@@ -17,7 +17,7 @@ class LoadPdfPages(ExtractorBase):
 
     def extract(self, key, doc):
         path_or_reader = doc[self.key]
-        if isinstance(path_or_reader, pdfrw.PdfReader):
+        if hasattr(path_or_reader, 'pages'):
             reader = path_or_reader
         else:
             reader = pdfrw.PdfReader(path_or_reader)
