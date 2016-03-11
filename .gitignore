@@ -1,0 +1,14 @@
+# Python
+*.egg-info
+*.pyc
+*.pyo
+
+# Twisted
+/.coverage
+/_trial_temp
+/twistd.log
+/twistd.pid
+/twisted/plugins/dropin.cache
+
+# Buildout paths
+/src
