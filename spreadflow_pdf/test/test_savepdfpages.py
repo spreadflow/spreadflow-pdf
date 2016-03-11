@@ -13,7 +13,7 @@ from testtools.twistedsupport import AsynchronousDeferredRunTest
 from spreadflow_core.scheduler import Scheduler
 from spreadflow_delta.test.matchers import MatchesSendDeltaItemInvocation
 
-from spreadflow_pdf.proc import SavePfdPages
+from spreadflow_pdf.proc import SavePdfPages
 
 
 class SavePdfPagesTestCase(TestCase):
