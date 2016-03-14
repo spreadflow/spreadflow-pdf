@@ -7,7 +7,7 @@ import os
 import pdfrw
 import tempfile
 
-from spreadflow_delta.proc import ExtractorBase
+from spreadflow_delta.proc import ExtractorBase, util
 
 class LoadPdfPages(ExtractorBase):
     def __init__(self, key='path', slicekey=None, destkey='content'):
@@ -41,18 +41,12 @@ class SavePdfPages(ExtractorBase):
         path = doc[self.destkey]
         tmpdir = os.path.dirname(path)
 
-        stream = tempfile.NamedTemporaryFile(dir=tmpdir, delete=False)
-        try:
-            with stream:
-                writer = pdfrw.PdfWriter(version=self.version, compress=self.compress)
-                for page in doc[self.key]:
-                    writer.addpage(page)
-                writer.write(stream)
-        except:
-            os.unlink(stream.name)
-            raise
-        else:
-            os.rename(stream.name, path)
+        writer = pdfrw.PdfWriter(version=self.version, compress=self.compress)
+        for page in doc[self.key]:
+            writer.addpage(page)
+
+        with util.open_replace(path) as stream:
+            writer.write(stream)
 
         if self.clear:
             del doc[self.key]

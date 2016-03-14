@@ -40,28 +40,18 @@ class SavePdfPagesTestCase(TestCase):
         send = Mock(spec=Scheduler.send)
 
         open_mock = mock_open()
-        open_mock.return_value.name = '/path/to/some/tmpXYZabc'
-
-        # FIXME, patch os.rename, os.unlink
-        with patch('tempfile.NamedTemporaryFile', open_mock):
-            with patch('pdfrw.PdfWriter', spec=pdfrw.PdfWriter) as writer_mock:
-                with patch('os.rename') as rename_mock:
-                    with patch('os.unlink') as unlink_mock:
-                        sut(insert, send)
+        with patch('spreadflow_delta.util.open_replace', open_mock), patch('pdfrw.PdfWriter', spec=pdfrw.PdfWriter) as writer_mock:
+            sut(insert, send)
 
         self.assertEquals(send.call_count, 1)
         self.assertThat(send.call_args, matches)
 
-        open_mock.assert_called_once_with(dir='/path/to/some', delete=False)
+        open_mock.assert_called_once_with('/path/to/some/dumpfile.pdf')
 
         writer_mock.assert_called_with(version='1.3', compress=False)
         writer_mock.return_value.assert_has_calls([
             call.addpage(u'pdf content of page 1'),
             call.addpage(u'pdf content of page 2'),
             call.addpage(u'pdf content of page 3'),
-            call.write(open_mock.return_value)
+            call.write(open_mock())
         ])
-
-        rename_mock.called_once_with('/path/to/some/tmpXYZabc', '/path/to/some/dumpfile.pdf')
-
-        unlink_mock.assert_not_called()
