@@ -18,7 +18,7 @@ from spreadflow_pdf.proc import SavePdfPages
 
 
 class SavePdfPagesTestCase(TestCase):
-    def test_load_all(self):
+    def test_save(self):
         sut = SavePdfPages(key='test_content', destkey='test_savepath')
         insert = {
             'inserts': ['a'],
